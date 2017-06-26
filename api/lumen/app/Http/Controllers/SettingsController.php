@@ -21,30 +21,21 @@ class SettingsController extends Controller
     }
 
     /**
-     * Returns the Soundcloud Client Id
-     *
-     * @return string
-     */
-    public function getSoundcloudClientId()
-    {
-        $soundcloudClientId = Settings::where('label', 'soundcloud_client_id')->limit(1)->pluck('value');
-
-        return response()->json($soundcloudClientId[0]);
-    }
-
-    /**
-     * Sets the Soundcloud Client Id
+     * Sets the API settings
      *
      * @param $request Request
      * @return \Illuminate\Http\Response
      */
-    public function setSoundcloudClientId(Request $request)
+    public function setSettings(Request $request)
     {
-        $soundcloudClientId = Settings::firstOrCreate(['label' => 'soundcloud_client_id']);
+        foreach ($request->all() as $label => $value) {
+            $setting = Settings::firstOrCreate(['label' => $label]);
 
-        $soundcloudClientId->setAttribute('value', $request->all()['value']);
-        $soundcloudClientId->save();
+            $setting->setAttribute('value', $value);
+            $setting->save();
+        }
+        
 
-        return response()->json($soundcloudClientId);
+        return response()->json(array('valid' => true));
     }
 }
